@@ -5,58 +5,16 @@
     <nav-bar class="home-nav">
       <div slot="center">精品馆</div>
     </nav-bar>
-    <home-swiper :banner="banner"></home-swiper>
-    <home-recommend-view :recommend="recommend"></home-recommend-view>
-    <feature-view></feature-view>
-    <tab-control :title="['流行','新款','样式']" class="tab-control" @tabClick="tabClick"></tab-control>
-    <goods-list :goods="showGoods"></goods-list>
-    <ul>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-      <li>11111</li>
-    </ul>
+    <scroll class="content" ref="scroll">
+      <home-swiper :banner="banner"></home-swiper>
+      <home-recommend-view :recommend="recommend"></home-recommend-view>
+      <feature-view></feature-view>
+      <tab-control :title="['流行','新款','样式']" class="tab-control" @tabClick="tabClick"></tab-control>
+      <goods-list :goods="showGoods"></goods-list>
+    </scroll>
+    <back-top @click.native="backTop"></back-top>
+    <!-- 监听组件事件时需要添加.native -->
   </div>
-  <!-- <nav-bar><nav-bar/> -->
 </template>
 
 <script>
@@ -64,9 +22,11 @@ import HomeSwiper from "./childComps/HomeSwiper";
 import HomeRecommendView from "./childComps/HomeRecommendView";
 import FeatureView from "./childComps/FeatureView";
 
+import Scroll from "components/common/scroll/Scroll";
 import NavBar from "components/common/navbar/NavBar";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
+import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 
@@ -79,6 +39,8 @@ export default {
     FeatureView,
     TabControl,
     GoodsList,
+    Scroll,
+    BackTop,
   },
   computed: {
     showGoods() {
@@ -124,6 +86,10 @@ export default {
           break;
       }
     },
+    backTop() {
+      this.$refs.scroll.backTopClick(0, 0, 1000);
+      console.log("aaa");
+    },
     // 网络请求方法
     getHomeMultidata() {
       getHomeMultidata().then((res) => {
@@ -150,7 +116,9 @@ export default {
 <style scoped>
 /* @import url(); 引入css类 <style scoped src='./assets/css/base.css'>*/
 #home {
+  /* position: relative; */
   padding-top: 44px;
+  /* height: 100hv; */
 }
 .tab-control {
   position: sticky;
@@ -164,5 +132,14 @@ export default {
   top: 0;
   z-index: 9;
   width: 100%;
+}
+.content {
+  position: fixed;
+  /* height: calc(100%-93px); */
+  overflow: hidden;
+  top: 45px;
+  bottom: 50px;
+  left: 0;
+  right: 0;
 }
 </style>
