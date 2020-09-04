@@ -53,8 +53,4 @@ export default {
   width: 100%;
   border-radius: 50%;
 }
-.recommend-item div {
-  /* background-color: pink; */
-  z-index: 1;
-}
 </style>
