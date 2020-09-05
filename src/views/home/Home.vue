@@ -5,14 +5,21 @@
     <nav-bar class="home-nav">
       <div slot="center">精品馆</div>
     </nav-bar>
-    <scroll class="content" ref="scroll">
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      :pull-up-load="true"
+      @scroll="contentScroll"
+      @pullingUp="loadMore"
+    >
       <home-swiper :banner="banner"></home-swiper>
       <home-recommend-view :recommend="recommend"></home-recommend-view>
       <feature-view></feature-view>
       <tab-control :title="['流行','新款','样式']" class="tab-control" @tabClick="tabClick"></tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
-    <back-top @click.native="backTop"></back-top>
+    <back-top @click.native="backTop" v-show="isBackTopShow"></back-top>
     <!-- 监听组件事件时需要添加.native -->
   </div>
 </template>
@@ -49,6 +56,7 @@ export default {
   },
   data() {
     return {
+      isBackTopShow: false,
       banner: {},
       recommend: {},
       goods: {
@@ -69,11 +77,47 @@ export default {
     this.getHomeGoods("select");
   },
   //生命周期 - 挂载完成（访问DOM元素）
-  mounted() {},
+  mounted() {
+    // 监听goodsItem中图片加载完成事件，//在main.js中使用Vue对象作为事件总线
+    // 使用防抖动防止频繁刷新
+    const refresh = this.debounce(this.$refs.scroll.refresh, 50);
+    this.$bus.$on("itemImageLoad", () => {
+      // console.log("--");
+
+      // this.$refs.scroll.refresh();
+      refresh();
+    });
+  },
   methods: {
+    // 防抖动函数
+    debounce(func, delay) {
+      let timer = null;
+      return function (...args) {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+          func.apply(this, args);
+        }, delay);
+      };
+    },
+    loadMore() {
+      console.log("上拉");
+      this.getHomeGoods(this.tabControlType);
+      // console.log(this.goods[this.tabControlType].page);
+      // this.$refs.scroll.scroll.refresh();
+    },
+    contentScroll(position) {
+      // console.log(position);
+      if (position.y < -1000) {
+        this.isBackTopShow = true;
+      } else {
+        this.isBackTopShow = false;
+      }
+    },
     //事件监听方法
     tabClick(index) {
-      console.log(index);
+      // console.log(index);
       switch (index) {
         case 0:
           this.tabControlType = "pop";
@@ -88,7 +132,6 @@ export default {
     },
     backTop() {
       this.$refs.scroll.backTopClick(0, 0, 1000);
-      console.log("aaa");
     },
     // 网络请求方法
     getHomeMultidata() {
@@ -104,11 +147,17 @@ export default {
 
       getHomeGoods(type, page).then((res) => {
         // console.log(res);
-
-        // console.log(res[type][page].list);
-        this.goods[type].list.push(...res[type][page].list);
+        let arr = Object.keys(res[type]);
+        // console.log(arr.length);
+        if (page > arr.length) {
+          console.log("已无商品");
+          this.$refs.scroll.finishPullUp();
+        } else {
+          this.goods[type].list.push(...res[type][page].list);
+          this.$refs.scroll.finishPullUp();
+          this.goods[type].page = page;
+        }
       });
-      this.goods[type].page = page;
     },
   },
 };
@@ -126,7 +175,7 @@ export default {
   top: 44px;
 }
 .home-nav {
-  background-color: var(--color-tint);
+  background-color: #ccc;
   color: white;
   position: fixed;
   top: 0;

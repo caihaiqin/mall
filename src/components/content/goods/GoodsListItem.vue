@@ -1,7 +1,8 @@
 <!--  -->
 <template>
   <div class="goods-list-item">
-    <img :src="goodsItem.img" alt />
+    <img :src="goodsItem.img" @load="imageLoad" />
+    <!-- 监听图片加载是否完成，加载完成刷新scroll 重新计算滚动高度 -->
     <div>
       <p class="goods-list-item-title">{{goodsItem.title}}</p>
       <span class="goods-list-item-price">{{goodsItem.price}}</span>
@@ -13,6 +14,13 @@
 <script>
 export default {
   name: "GoodsListItem",
+  methods: {
+    imageLoad() {
+      // console.log("imageload");
+      //在main.js中使用Vue对象作为事件总线$bus
+      this.$bus.$emit("itemImageLoad");
+    },
+  },
   props: {
     goodsItem: {
       type: Object,
