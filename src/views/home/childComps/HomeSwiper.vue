@@ -3,7 +3,7 @@
   <swiper>
     <el-carousel-item v-for="item in banner" :key="item.index">
       <a :href="item.link" class="imgbox">
-        <img :src="item.pic" alt />
+        <img :src="item.pic" @load="imgLoad" />
       </a>
     </el-carousel-item>
   </swiper>
@@ -13,6 +13,15 @@
 import Swiper from "components/common/swiper/Swiper";
 export default {
   name: "HomeSwiper",
+  methods: {
+    imgLoad() {
+      if (!this.imgIsLoad) {
+        console.log("imgload");
+        this.$emit("swiperImgLoad");
+        this.imgIsLoad = true;
+      }
+    },
+  },
   components: {
     Swiper,
   },
@@ -25,7 +34,7 @@ export default {
     },
   },
   data() {
-    return {};
+    return { imgIsLoad: false };
   },
   //生命周期 - 创建完成（访问当前this实例）
   created() {},

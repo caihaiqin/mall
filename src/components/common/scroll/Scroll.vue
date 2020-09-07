@@ -19,6 +19,12 @@ export default {
     return { scroll: null };
   },
   methods: {
+    scrollTo(x, y, time) {
+      this.scroll.scrollTo(x, y, time);
+    },
+    getScrollY() {
+      return this.scroll ? this.scroll.y : 0;
+    },
     backTopClick(x, y, time = 1000) {
       this.scroll && this.scroll.scrollTo(x, y, time);
     },
@@ -41,14 +47,18 @@ export default {
       pullUpLoad: this.pullUpLoad,
       click: true,
     });
-    this.scroll.on("scroll", (position) => {
-      this.$emit("scroll", position);
-      // console.log(this.pullUpLoad);
-    });
-    this.scroll.on("pullingUp", () => {
-      console.log("上拉");
-      this.$emit("pullingUp");
-    });
+    if (this.probeType == 2 || this.probeType == 3) {
+      this.scroll.on("scroll", (position) => {
+        this.$emit("scroll", position);
+        // console.log(this.pullUpLoad);
+      });
+    }
+    if (this.pullUpLoad) {
+      this.scroll.on("pullingUp", () => {
+        console.log("上拉");
+        this.$emit("pullingUp");
+      });
+    }
   },
 };
 </script>

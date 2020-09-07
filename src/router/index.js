@@ -11,24 +11,10 @@ const Home = () => import('../views/home/Home.vue')
 const Shopcar = () => import('../views/shopcar/Shopcar.vue')
 const Category = () => import('../views/category/Category.vue')
 const Profile = () => import('../views/profile/Profile.vue')
+const Detail = () => import('views/detail/Detail')
 Vue.use(VueRouter)
 
-// const routes = [{
-//   path: '',
-//   redirect: '/home'
-// }, {
-//   path: '/home',
-//   component: Home
-// }, {
-//   path: '/shopcar',
-//   component: Shopcar
-// }, {
-//   path: '/category',
-//   component: Category
-// }, {
-//   path: '/profile',
-//   component: Profile
-// }]
+
 
 const router = new VueRouter({
   routes: [{
@@ -46,6 +32,10 @@ const router = new VueRouter({
   }, {
     path: '/profile',
     component: Profile
+  }, {
+    //动态路由
+    path: '/detail/:iid',
+    component: Detail
   }],
   mode: 'history'
 })

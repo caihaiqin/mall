@@ -5,6 +5,13 @@
     <nav-bar class="home-nav">
       <div slot="center">精品馆</div>
     </nav-bar>
+    <tab-control
+      ref="tabcontrol1"
+      :title="['流行','新款','精选']"
+      id="tabcontrolfixed"
+      @tabClick="tabClick"
+      v-show="isTabControlFixed"
+    ></tab-control>
     <scroll
       class="content"
       ref="scroll"
@@ -13,10 +20,15 @@
       @scroll="contentScroll"
       @pullingUp="loadMore"
     >
-      <home-swiper :banner="banner"></home-swiper>
+      <home-swiper :banner="banner" @swiperImgLoad="swiperImgLoad"></home-swiper>
       <home-recommend-view :recommend="recommend"></home-recommend-view>
       <feature-view></feature-view>
-      <tab-control :title="['流行','新款','样式']" class="tab-control" @tabClick="tabClick"></tab-control>
+      <tab-control
+        ref="tabcontrol2"
+        :title="['流行','新款','精选']"
+        class="tab-control"
+        @tabClick="tabClick"
+      ></tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
     <back-top @click.native="backTop" v-show="isBackTopShow"></back-top>
@@ -36,6 +48,7 @@ import GoodsList from "components/content/goods/GoodsList";
 import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
+import { debounce } from "common/utils";
 
 export default {
   name: "home",
@@ -57,6 +70,9 @@ export default {
   data() {
     return {
       isBackTopShow: false,
+      isTabControlFixed: false,
+      saveY: 0,
+
       banner: {},
       recommend: {},
       goods: {
@@ -65,7 +81,16 @@ export default {
         select: { page: 0, list: [] },
       },
       tabControlType: "pop",
+      tabControlOffSetTop: 0,
     };
+  },
+  // 解决切换到其他页面返回时页面停留在离开时的位置，首先在APP.vue添加keep-alive
+  activated() {
+    this.$refs.scroll.scrollTo(0, this.saveY, 0);
+    this.$refs.scroll.refresh();
+  },
+  deactivated() {
+    this.saveY = this.$refs.scroll.getScrollY();
   },
   //生命周期 - 创建完成（访问当前this实例）
   created() {
@@ -80,27 +105,18 @@ export default {
   mounted() {
     // 监听goodsItem中图片加载完成事件，//在main.js中使用Vue对象作为事件总线
     // 使用防抖动防止频繁刷新
-    const refresh = this.debounce(this.$refs.scroll.refresh, 50);
+    const refresh = debounce(this.$refs.scroll.refresh, 50);
     this.$bus.$on("itemImageLoad", () => {
-      // console.log("--");
-
-      // this.$refs.scroll.refresh();
       refresh();
     });
+    // console.log(this.$refs.tabcontrol.$el.offsetTop);
   },
   methods: {
-    // 防抖动函数
-    debounce(func, delay) {
-      let timer = null;
-      return function (...args) {
-        if (timer) {
-          clearTimeout(timer);
-        }
-        timer = setTimeout(() => {
-          func.apply(this, args);
-        }, delay);
-      };
+    //录播图加载完后保存tabcontrol距离顶部位置
+    swiperImgLoad() {
+      this.tabControlOffSetTop = this.$refs.tabcontrol2.$el.offsetTop;
     },
+
     loadMore() {
       console.log("上拉");
       this.getHomeGoods(this.tabControlType);
@@ -109,6 +125,12 @@ export default {
     },
     contentScroll(position) {
       // console.log(position);
+      // console.log(this.$refs.tabcontrol.getBoundingClientRect().top);
+      if (this.tabControlOffSetTop < -position.y) {
+        this.isTabControlFixed = true;
+      } else {
+        this.isTabControlFixed = false;
+      }
       if (position.y < -1000) {
         this.isBackTopShow = true;
       } else {
@@ -129,6 +151,8 @@ export default {
           this.tabControlType = "select";
           break;
       }
+      this.$refs.tabcontrol1.currentIndex = index;
+      this.$refs.tabcontrol2.currentIndex = index;
     },
     backTop() {
       this.$refs.scroll.backTopClick(0, 0, 1000);
@@ -164,22 +188,21 @@ export default {
 </script>
 <style scoped>
 /* @import url(); 引入css类 <style scoped src='./assets/css/base.css'>*/
-#home {
-  /* position: relative; */
-  padding-top: 44px;
-  /* height: 100hv; */
+
+#tabcontrolfixed {
+  position: relative !important;
+  /* left: 0;
+  right: 0;
+  top: 44px; */
+  z-index: 100 !important;
 }
-.tab-control {
-  position: sticky;
-  /* 当top达到44px时自动变为fixed */
-  top: 44px;
-}
+
 .home-nav {
   background-color: #ccc;
   color: white;
-  position: fixed;
+  /* position: fixed;
   top: 0;
-  z-index: 9;
+  z-index: 9; */
   width: 100%;
 }
 .content {

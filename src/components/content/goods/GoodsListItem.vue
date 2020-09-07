@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-  <div class="goods-list-item">
+  <div class="goods-list-item" @click="clickGoodsItem">
     <img :src="goodsItem.img" @load="imageLoad" />
     <!-- 监听图片加载是否完成，加载完成刷新scroll 重新计算滚动高度 -->
     <div>
@@ -19,6 +19,10 @@ export default {
       // console.log("imageload");
       //在main.js中使用Vue对象作为事件总线$bus
       this.$bus.$emit("itemImageLoad");
+    },
+    clickGoodsItem() {
+      console.log(this.goodsItem.iid);
+      this.$router.push("/detail/" + this.goodsItem.iid);
     },
   },
   props: {
