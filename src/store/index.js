@@ -10,6 +10,9 @@ const store = new Vuex.Store({
   getters: {
     carListLength(state) {
       return state.carList.length
+    },
+    carList(state) {
+      return state.carList
     }
   },
   actions: {
@@ -32,6 +35,7 @@ const store = new Vuex.Store({
       payload.count++;
     },
     productPush(state, payload) {
+      payload.checked = true;
       state.carList.push(payload);
     }
 
