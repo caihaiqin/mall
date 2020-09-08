@@ -5,7 +5,7 @@ export const backTopMixin = {
   },
   data() {
     return {
-      isBackTopShow: true,
+      isBackTopShow: false,
     }
   },
   methods: {

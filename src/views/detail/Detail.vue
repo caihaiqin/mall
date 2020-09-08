@@ -2,7 +2,7 @@
 <template>
   <div id="detail">
     <detail-nav-bar></detail-nav-bar>
-    <scroll class="content" @scroll="contentScroll" ref="scroll">
+    <scroll class="content" :probe-type="3" @scroll="contentScroll" ref="scroll">
       <detail-swiper :top-images="topImages"></detail-swiper>
       <detail-shop-info :shop="shop"></detail-shop-info>
       <div>{{this.detail.desc}}</div>
@@ -28,7 +28,7 @@
       <img src="http://localhost:4000/detail/swiperimg/pop1-2/2.jpg" alt />
       <img src="http://localhost:4000/detail/swiperimg/pop1-2/2.jpg" alt />
     </scroll>
-    <detail-bottom-bar></detail-bottom-bar>
+    <detail-bottom-bar @addToCar="addToCar"></detail-bottom-bar>
     <back-top @click.native="backTop" v-show="isBackTopShow"></back-top>
   </div>
 </template>
@@ -72,14 +72,18 @@ export default {
   //生命周期 - 挂载完成（访问DOM元素）
   mounted() {},
   methods: {
+    addToCar() {
+      const product = {};
+      product.image = this.topImages[0];
+      product.price = 100;
+      product.title = "沙发";
+      product.iid = this.iid;
+      product.desc =
+        "此款为林氏木业北欧简约四门衣柜储物家用整体卧室拉门式抽屉大衣橱FT1D ";
+      //使用VUEX保存购物车数据
+      this.$store.dispatch("addCart", product);
+    },
     contentScroll(position) {
-      // console.log(position);
-      // console.log(this.$refs.tabcontrol.getBoundingClientRect().top);
-      // if (this.tabControlOffSetTop < -position.y) {
-      //   this.isTabControlFixed = true;
-      // } else {
-      //   this.isTabControlFixed = false;
-      // }
       if (position.y < -1000) {
         this.isBackTopShow = true;
       } else {

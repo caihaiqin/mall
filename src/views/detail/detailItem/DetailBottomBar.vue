@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="bar-right">
-      <div class="cart" @click="cartClick">加入购物车</div>
+      <div class="cart" @click="addToCar">加入购物车</div>
       <div class="buy" @click="buyClick">购买</div>
     </div>
   </div>
@@ -25,7 +25,13 @@ export default {
   data() {
     return {};
   },
-  methods: { cartClick() {}, buyClick() {} },
+  methods: {
+    addToCar() {
+      
+      this.$emit("addToCar");
+    },
+    buyClick() {},
+  },
   //生命周期 - 创建完成（访问当前this实例）
   created() {},
   //生命周期 - 挂载完成（访问DOM元素）
