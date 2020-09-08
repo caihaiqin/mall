@@ -49,6 +49,7 @@ import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 import { debounce } from "common/utils";
+import { backTopMixin } from "common/mixin.js";
 
 export default {
   name: "home",
@@ -60,8 +61,9 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
-    BackTop,
+    
   },
+  mixins: [backTopMixin],
   computed: {
     showGoods() {
       return this.goods[this.tabControlType].list;
@@ -69,7 +71,7 @@ export default {
   },
   data() {
     return {
-      isBackTopShow: false,
+      // isBackTopShow: false,使用混入Mixin替代
       isTabControlFixed: false,
       saveY: 0,
 
@@ -154,9 +156,9 @@ export default {
       this.$refs.tabcontrol1.currentIndex = index;
       this.$refs.tabcontrol2.currentIndex = index;
     },
-    backTop() {
-      this.$refs.scroll.backTopClick(0, 0, 1000);
-    },
+    // backTop() {
+    //   this.$refs.scroll.backTopClick(0, 0, 1000);
+    // },
     // 网络请求方法
     getHomeMultidata() {
       getHomeMultidata().then((res) => {
