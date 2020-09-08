@@ -81,7 +81,9 @@ export default {
       product.desc =
         "此款为林氏木业北欧简约四门衣柜储物家用整体卧室拉门式抽屉大衣橱FT1D ";
       //使用VUEX保存购物车数据
-      this.$store.dispatch("addCart", product);
+      this.$store.dispatch("addCart", product).then((res) => {
+        console.log(res);
+      });
     },
     contentScroll(position) {
       if (position.y < -1000) {

@@ -15,20 +15,6 @@ const store = new Vuex.Store({
       return state.carList
     }
   },
-  actions: {
-    addCart(context, payload) {
-      const oldProduct = context.state.carList.find(item => item.iid === payload.iid)
-      if (oldProduct) {
-        context.commit('productAdd', oldProduct)
-        // oldProduct.count += 1;
-      } else {
-        payload.count = 1;
-        // state.carList.push(payload);
-        context.commit('productPush', payload)
-      }
-
-    }
-  },
   mutations: {
     // 将商品添加到购物车
     productAdd(state, payload) {
@@ -39,7 +25,27 @@ const store = new Vuex.Store({
       state.carList.push(payload);
     }
 
+  },
+  actions: {
+    addCart(context, payload) {
+      return new Promise((resove, reject) => {
+        const oldProduct = context.state.carList.find(item => item.iid === payload.iid)
+        if (oldProduct) {
+          context.commit('productAdd', oldProduct)
+          // oldProduct.count += 1;
+          resove('商品数量加1')
+        } else {
+          payload.count = 1;
+          // state.carList.push(payload);
+          context.commit('productPush', payload)
+          resove('商品添加成功')
+        }
+      })
+
+    }
   }
+
 })
+
 
 export default store

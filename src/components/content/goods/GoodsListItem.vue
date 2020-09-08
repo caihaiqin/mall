@@ -1,7 +1,8 @@
 <!--  -->
 <template>
   <div class="goods-list-item" @click="clickGoodsItem">
-    <img :src="goodsItem.img" @load="imageLoad" />
+    //使用懒加载v-lazy
+    <img v-lazy="goodsItem.img" @load="imageLoad" />
     <!-- 监听图片加载是否完成，加载完成刷新scroll 重新计算滚动高度 -->
     <div>
       <p class="goods-list-item-title">{{goodsItem.title}}</p>

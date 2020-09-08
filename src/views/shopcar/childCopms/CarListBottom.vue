@@ -18,7 +18,13 @@ export default {
     return {};
   },
   methods: {
-    checkAllClick() {},
+    checkAllClick() {
+      if (this.isAllChecked) {
+        this.$store.state.carList.forEach((item) => (item.checked = false));
+      } else {
+        this.$store.state.carList.forEach((item) => (item.checked = true));
+      }
+    },
   },
   computed: {
     totalPrice() {
