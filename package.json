@@ -9,6 +9,7 @@
   "dependencies": {
     "axios": "^0.20.0",
     "better-scroll": "^2.0.2",
+    "build": "^0.1.4",
     "core-js": "^3.6.5",
     "element-ui": "^2.13.2",
     "fastclick": "^1.0.6",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
+    "postcss-px-to-viewport": "^1.1.1",
     "vue-template-compiler": "^2.6.11"
   }
 }
